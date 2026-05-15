@@ -15,7 +15,7 @@ class StudentWorldModel(nn.Module):
         self,
         obs_dim: int = 4,
         act_dim: int = 1,
-        hidden_dim: int = 128,
+        hidden_dim: int = 512,
         num_layers: int = 2,
         use_gru: bool = True,
         delta_limit: float = 3.0,
