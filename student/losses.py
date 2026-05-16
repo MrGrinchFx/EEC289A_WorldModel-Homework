@@ -35,7 +35,11 @@ def one_step_delta_loss(model, states: torch.Tensor, actions: torch.Tensor, norm
 
     target_delta = states[:, 1:] - states[:, :-1]    # (B, T, obs_dim) ✓
     target_norm  = normalizer.normalize_delta(target_delta)
-
+    
+    burn_in = 10
+    if seq_len > burn_in:
+        return F.mse_loss(preds_norm_stack[:, burn_in:], target_norm[:, burn_in:])
+    
     return F.mse_loss(preds_norm_stack, target_norm)
 
 
