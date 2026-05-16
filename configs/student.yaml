@@ -10,11 +10,11 @@ model:
 
 training:
   batch_size: 128
-  updates: 10000            # was 12000 — more training with LR decay matters
+  updates: 10000            
   smoke_updates: 120
   train_sequence_length: 256
-  learning_rate: 1.0e-4     # higher initial LR; cosine decay will bring it down
-  grad_clip_norm: 1.0        # tighter clipping (was 5.0) — GRUs destabilize with large grads
+  learning_rate: 3.0e-4     # Changed to a stable constant LR (standard Adam default)
+  grad_clip_norm: 5.0       # Relaxed clipping since BPTT is now working properly
   eval_every: 200
   smoke_eval_every: 20
   val_horizon: 500
@@ -23,9 +23,9 @@ training:
   checkpoint_mode: max
 
 loss:
-  one_step_weight: 1.0    # balanced — rollout is now doing the heavy lifting
-  rollout_weight: 4.0        # was 2.0; horizon-weighted rollout deserves more weight
-  rollout_train_horizon: 90  # match val_horizon target; warmup=10 → needs seq_len≥91 ✓
+  one_step_weight: 1.0    
+  rollout_weight: 1.0       # Reduced from 4.0 to let 1-step learning stabilize first
+  rollout_train_horizon: 10 # Reduced from 90 to 10 for stable initial dynamics learning
 
 eval:
   warmup_steps: 10
