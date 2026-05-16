@@ -66,7 +66,7 @@ def rollout_loss(
     # Horizon-weighted loss: ramp penalty from 1x at step 0 to 2.5x at step H.
     # Later steps are exactly what VPT80 measures, so we pressure them more.
     h       = pred_norm.shape[1]
-    weights = torch.linspace(1.0, 2.5, h, device=pred_norm.device)
+    weights = torch.linspace(1.0, 5.0, h, device=pred_norm.device)
     weights = weights / weights.mean()                # keep overall loss scale stable
     sq_err  = (pred_norm - target_norm) ** 2          # (B, H, obs_dim)
     return (sq_err.mean(dim=-1) * weights.unsqueeze(0)).mean()
