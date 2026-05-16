@@ -23,7 +23,7 @@ training:
 
 loss:
   one_step_weight: 1.0
-  rollout_weight: 1.0
+  rollout_weight: 0.5
   rollout_train_horizon: 35
 
 eval:
