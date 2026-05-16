@@ -18,14 +18,17 @@ def one_step_delta_loss(model, states: torch.Tensor, actions: torch.Tensor, norm
     hidden = model.initial_hidden(batch_size, states.device)
 
     preds = []
-    for t in range(seq_len):                          # T iterations → T predictions
+    for t in range(seq_len):
         obs_norm = normalizer.normalize_obs(states[:, t])
         act_norm = normalizer.normalize_act(actions[:, t])
         pred_norm, hidden = model(obs_norm, act_norm, hidden)
-        # Truncated BPTT: detach hidden every step so gradients don't vanish
-        # through the full sequence length, while the GRU still builds memory
-        # in the forward pass.
-        hidden = hidden.detach()
+        
+        # Proper Truncated BPTT: detach every 32 steps instead of every single step.
+        # This allows gradients to flow backward through time for 32 steps, teaching 
+        # the GRU memory dynamics without causing gradient explosions or OOM errors.
+        if (t + 1) % 32 == 0:
+            hidden = hidden.detach()
+            
         preds.append(pred_norm)
 
     preds_norm_stack = torch.stack(preds, dim=1)      # (B, T, obs_dim)
