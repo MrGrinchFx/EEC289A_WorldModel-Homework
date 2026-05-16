@@ -25,7 +25,7 @@ training:
 loss:
   one_step_weight: 1.0    
   rollout_weight: 1.0       # Reduced from 4.0 to let 1-step learning stabilize first
-  rollout_train_horizon: 40 # Reduced from 90 to 10 for stable initial dynamics learning
+  rollout_train_horizon: 25 # Reduced from 90 to 10 for stable initial dynamics learning
 
 eval:
   warmup_steps: 10
