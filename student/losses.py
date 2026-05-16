@@ -9,14 +9,30 @@ from .rollout import open_loop_rollout
 
 
 def one_step_delta_loss(model, states: torch.Tensor, actions: torch.Tensor, normalizer) -> torch.Tensor:
-    obs = states[:, :-1].reshape(-1, states.shape[-1])
-    act = actions.reshape(-1, actions.shape[-1])
-    target_delta = (states[:, 1:] - states[:, :-1]).reshape(-1, states.shape[-1])
-    obs_norm = normalizer.normalize_obs(obs)
-    act_norm = normalizer.normalize_act(act)
+    batch_size = states.shape[0]
+    seq_len = actions.shape[1]
+    
+    # Initialize the hidden state at the start of the sequence window
+    hidden = model.initial_hidden(batch_size, states.device)
+    
+    preds = []
+    # Step through time to allow the GRU to build up memory correctly
+    for t in range(seq_len):
+        obs_norm = normalizer.normalize_obs(states[:, t])
+        act_norm = normalizer.normalize_act(actions[:, t])
+        
+        # Pass the hidden state sequentially
+        pred_norm, hidden = model(obs_norm, act_norm, hidden)
+        preds.append(pred_norm)
+        
+    # Stack predictions back into (Batch, Time, Dim)
+    preds_norm_stack = torch.stack(preds, dim=1)
+    
+    # Calculate targets
+    target_delta = states[:, 1:] - states[:, :-1]
     target_norm = normalizer.normalize_delta(target_delta)
-    pred_norm, _ = model(obs_norm, act_norm, None)
-    return F.mse_loss(pred_norm, target_norm)
+    
+    return F.mse_loss(preds_norm_stack, target_norm)
 
 
 def rollout_loss(model, states: torch.Tensor, actions: torch.Tensor, normalizer, warmup_steps: int, horizon: int) -> torch.Tensor:
