@@ -10,7 +10,7 @@ model:
 
 training:
   batch_size: 128
-  updates: 20000            # was 12000 — more training with LR decay matters
+  updates: 10000            # was 12000 — more training with LR decay matters
   smoke_updates: 120
   train_sequence_length: 256
   learning_rate: 1.0e-4     # higher initial LR; cosine decay will bring it down
