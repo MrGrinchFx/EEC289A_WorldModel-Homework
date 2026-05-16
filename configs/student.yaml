@@ -9,10 +9,10 @@ model:
 
 training:
   batch_size: 128
-  updates: 10000
+  updates: 6000
   smoke_updates: 120
-  train_sequence_length: 64
-  learning_rate: 1.0e-3
+  train_sequence_length: 128
+  learning_rate: 3.0e-4
   grad_clip_norm: 10.0
   eval_every: 200
   smoke_eval_every: 20
@@ -23,8 +23,8 @@ training:
 
 loss:
   one_step_weight: 1.5
-  rollout_weight: 0.5
-  rollout_train_horizon: 35
+  rollout_weight: 2.0
+  rollout_train_horizon: 60
 
 eval:
   warmup_steps: 10
