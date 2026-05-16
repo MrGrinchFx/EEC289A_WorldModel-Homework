@@ -51,7 +51,7 @@ def rollout_loss(
             f"need at least {needed_states - 1} actions for warmup={warmup_steps}, horizon={horizon}."
         )
     max_start = states.shape[1] - needed_states
-    start = int(torch.randint(0, max_start + 1, (), device=states.device).item()) if max_start > 0 else 0
+    start = 0
 
     sub_states  = states[:, start : start + needed_states]
     sub_actions = actions[:, start : start + int(warmup_steps) + int(horizon)]
