@@ -12,20 +12,20 @@ training:
   batch_size: 128
   updates: 20000            # was 12000 — more training with LR decay matters
   smoke_updates: 120
-  train_sequence_length: 128
-  learning_rate: 3.0e-4     # higher initial LR; cosine decay will bring it down
+  train_sequence_length: 256
+  learning_rate: 1.0e-4     # higher initial LR; cosine decay will bring it down
   grad_clip_norm: 1.0        # tighter clipping (was 5.0) — GRUs destabilize with large grads
   eval_every: 200
   smoke_eval_every: 20
-  val_horizon: 200
+  val_horizon: 500
   max_val_windows: 128
   checkpoint_metric: val/VPT80@0.25
   checkpoint_mode: max
 
 loss:
-  one_step_weight: 1.0      # balanced — rollout is now doing the heavy lifting
-  rollout_weight: 3.0        # was 2.0; horizon-weighted rollout deserves more weight
-  rollout_train_horizon: 80  # match val_horizon target; warmup=10 → needs seq_len≥91 ✓
+  one_step_weight: 0.5    # balanced — rollout is now doing the heavy lifting
+  rollout_weight: 5.0        # was 2.0; horizon-weighted rollout deserves more weight
+  rollout_train_horizon: 120  # match val_horizon target; warmup=10 → needs seq_len≥91 ✓
 
 eval:
   warmup_steps: 10
