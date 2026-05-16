@@ -23,8 +23,8 @@ training:
   checkpoint_mode: max
 
 loss:
-  one_step_weight: 0.5    # balanced — rollout is now doing the heavy lifting
-  rollout_weight: 5.0        # was 2.0; horizon-weighted rollout deserves more weight
+  one_step_weight: 1.0    # balanced — rollout is now doing the heavy lifting
+  rollout_weight: 4.0        # was 2.0; horizon-weighted rollout deserves more weight
   rollout_train_horizon: 120  # match val_horizon target; warmup=10 → needs seq_len≥91 ✓
 
 eval:
