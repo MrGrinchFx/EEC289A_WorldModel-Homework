@@ -13,7 +13,7 @@ training:
   updates: 10000            
   smoke_updates: 120
   train_sequence_length: 256
-  learning_rate: 7.5e-5     # Changed to a stable constant LR (standard Adam default)
+  learning_rate: 1.0e-4     # Changed to a stable constant LR (standard Adam default)
   grad_clip_norm: 5.0       # Relaxed clipping since BPTT is now working properly
   eval_every: 200
   smoke_eval_every: 20
@@ -24,8 +24,8 @@ training:
 
 loss:
   one_step_weight: 1.0    
-  rollout_weight: 0.5       # Reduced from 4.0 to let 1-step learning stabilize first
-  rollout_train_horizon: 25 # Reduced from 90 to 10 for stable initial dynamics learning
+  rollout_weight: 0.1       # Reduced from 4.0 to let 1-step learning stabilize first
+  rollout_train_horizon: 15 # Reduced from 90 to 10 for stable initial dynamics learning
 
 eval:
   warmup_steps: 10
