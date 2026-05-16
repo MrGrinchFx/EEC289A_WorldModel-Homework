@@ -47,14 +47,16 @@ class StudentWorldModel(nn.Module):
             return None
         return torch.zeros(batch_size, self.gru.hidden_size, device=device)
 
-    def forward(self, obs_norm: torch.Tensor, act_norm: torch.Tensor, hidden=None):
-        feat = self.encoder(torch.cat([obs_norm, act_norm], dim=-1))
-        if self.gru is not None:
-            if hidden is None:
-                hidden = self.initial_hidden(obs_norm.shape[0], obs_norm.device)
-            hidden = self.gru(feat, hidden)
-            hidden = self.hidden_norm(hidden)   # normalize hidden before head
-            feat = hidden
-        raw_delta = self.head(feat)
-        delta = self.delta_limit * torch.tanh(raw_delta / self.delta_limit)
-        return delta, hidden
+ def forward(self, obs_norm, act_norm, hidden=None):
+    x = torch.cat([obs_norm, act_norm], dim=-1)
+    feat = self.encoder(x)
+    if self.gru is not None:
+        if hidden is None:
+            hidden = self.initial_hidden(obs_norm.shape[0], obs_norm.device)
+        hidden = self.gru(feat, hidden)
+        hidden = self.hidden_norm(hidden)
+        feat = hidden
+    # Skip connection: concatenate original input features into head
+    raw_delta = self.head(torch.cat([feat, self.input_proj(x)], dim=-1))
+    delta = self.delta_limit * torch.tanh(raw_delta / self.delta_limit)
+    return delta, hidden
