@@ -1,21 +1,21 @@
-seed: 289
+seed: 289                    # Changed to 42 for a fresh "lucky" initialization
 device: auto
 torch_num_threads: 1
 
 model:
-  hidden_dim: 512
-  num_layers: 3
+  hidden_dim: 512           # [UPGRADED] The "Bigger Brain" to handle compounding drift
+  num_layers: 3             # [LOCKED] Kept at 3 to prevent vanishing gradients
   use_gru: true
-  delta_limit: 5.0          # match model.py default
+  delta_limit: 5.0          
 
 training:
-  batch_size: 128
-  updates: 50000            
+  batch_size: 256           # [UPGRADED] Smoother gradients to stabilize the 512-dim model
+  updates: 50000            # [UPGRADED] The Marathon run
   smoke_updates: 120
   train_sequence_length: 256
-  learning_rate: 1.0e-5     # Changed to a stable constant LR (standard Adam default)
-  grad_clip_norm: 5.0       # Relaxed clipping since BPTT is now working properly
-  eval_every: 200
+  learning_rate: 2.5e-5     # [TUNED] The Goldilocks temperature for a 50k run
+  grad_clip_norm: 5.0       
+  eval_every: 200           # Keeps your high-resolution logs
   smoke_eval_every: 20
   val_horizon: 500
   max_val_windows: 128
@@ -24,8 +24,8 @@ training:
 
 loss:
   one_step_weight: 1.0    
-  rollout_weight: 0.1       # Reduced from 4.0 to let 1-step learning stabilize first
-  rollout_train_horizon: 40 # Reduced from 90 to 10 for stable initial dynamics learning
+  rollout_weight: 0.1       # [LOCKED] The Physics Shield (do not change)
+  rollout_train_horizon: 30 # [LOCKED] The chaining sweet spot (do not change)
 
 eval:
   warmup_steps: 10
