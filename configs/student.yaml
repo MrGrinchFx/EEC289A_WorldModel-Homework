@@ -3,19 +3,19 @@ device: auto
 torch_num_threads: 1
 
 model:
-  hidden_dim: 512           # [UPGRADED] The "Bigger Brain" to handle compounding drift
-  num_layers: 3             # [LOCKED] Kept at 3 to prevent vanishing gradients
+  hidden_dim: 512
+  num_layers: 2             # 2 layers of GRU is optimal for a 512-dim embedding
   use_gru: true
   delta_limit: 5.0          
 
 training:
-  batch_size: 256           # [UPGRADED] Smoother gradients to stabilize the 512-dim model
-  updates: 50000            # [UPGRADED] The Marathon run
+  batch_size: 256
+  updates: 50000
   smoke_updates: 120
   train_sequence_length: 256
-  learning_rate: 2.5e-5     # [TUNED] The Goldilocks temperature for a 50k run
+  learning_rate: 1.5e-4     # Boosted learning rate to escape local minima faster
   grad_clip_norm: 5.0       
-  eval_every: 200           # Keeps your high-resolution logs
+  eval_every: 500           # Reduced frequency slightly to speed up the 50k run
   smoke_eval_every: 20
   val_horizon: 500
   max_val_windows: 128
@@ -24,8 +24,8 @@ training:
 
 loss:
   one_step_weight: 1.0    
-  rollout_weight: 0.1       # [LOCKED] The Physics Shield (do not change)
-  rollout_train_horizon: 30 # [LOCKED] The chaining sweet spot (do not change)
+  rollout_weight: 0.5       # Increased weight forces the optimizer to respect the long horizon
+  rollout_train_horizon: 45 # Extended train horizon teaches the model compounding survival
 
 eval:
   warmup_steps: 10
