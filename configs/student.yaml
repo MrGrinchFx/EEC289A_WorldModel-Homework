@@ -3,8 +3,8 @@ device: auto
 torch_num_threads: 1
 
 model:
-  hidden_dim: 512
-  num_layers: 2             # 2 layers of GRU is optimal for a 512-dim embedding
+  hidden_dim: 256           # Scaled down to prevent parameter thrashing
+  num_layers: 2
   use_gru: true
   delta_limit: 5.0          
 
@@ -13,9 +13,9 @@ training:
   updates: 50000
   smoke_updates: 120
   train_sequence_length: 256
-  learning_rate: 5.0e-5     # Boosted learning rate to escape local minima faster
+  learning_rate: 1e-4       # Clean middle-ground LR
   grad_clip_norm: 5.0       
-  eval_every: 500           # Reduced frequency slightly to speed up the 50k run
+  eval_every: 500
   smoke_eval_every: 20
   val_horizon: 500
   max_val_windows: 128
@@ -24,8 +24,8 @@ training:
 
 loss:
   one_step_weight: 1.0    
-  rollout_weight: 0.3       # Increased weight forces the optimizer to respect the long horizon
-  rollout_train_horizon: 45 # Extended train horizon teaches the model compounding survival
+  rollout_weight: 0.25      # Lowered to prevent rollout from bullying the one-step loss
+  rollout_train_horizon: 15 # Shrink the horizon to a manageable length early in training
 
 eval:
   warmup_steps: 10

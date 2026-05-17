@@ -46,9 +46,11 @@ def rollout_loss(
     pred_norm = normalizer.normalize_obs(preds)
     target_norm = normalizer.normalize_obs(targets)
 
+    # Inside rollout_loss, replace the exponential weights with:
     h = pred_norm.shape[1]
-    # Exponential weighting: Ramp penalty much harder towards the end of the rollout
-    weights = torch.exp(torch.linspace(0.0, 3.0, h, device=pred_norm.device))
+    
+    # Linear ramp penalizes late-stage drift without causing gradient explosions
+    weights = torch.linspace(1.0, 5.0, h, device=pred_norm.device)
     weights = weights / weights.mean() 
     
     abs_err = F.smooth_l1_loss(pred_norm, target_norm, reduction='none')
