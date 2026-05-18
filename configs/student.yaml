@@ -3,7 +3,7 @@ device: auto
 torch_num_threads: 1
 
 model:
-  hidden_dim: 256           # Scaled down to prevent parameter thrashing
+  hidden_dim: 512           # Scaled down to prevent parameter thrashing
   num_layers: 2
   use_gru: true
   delta_limit: 5.0          
@@ -25,7 +25,7 @@ training:
 loss:
   one_step_weight: 1.0    
   rollout_weight: 0.25      # Lowered to prevent rollout from bullying the one-step loss
-  rollout_train_horizon: 15 # Shrink the horizon to a manageable length early in training
+  rollout_train_horizon: 30 # Shrink the horizon to a manageable length early in training
 
 eval:
   warmup_steps: 10
